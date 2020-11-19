@@ -43,7 +43,7 @@ export default class NewClass extends cc.Component {
         if (this._changePositionTime <= 0) {
             let targetX = getRandom(this._bossMoveRangeX[0], this._bossMoveRangeX[1], true);
             let targetY = getRandom(this._bossMoveRangeY[0], this._bossMoveRangeY[1], true);
-            cc.tween(this.node).to(this._moveTime, { position: cc.v2(targetX, targetY) }).start();
+            cc.tween(this.node).to(this._moveTime, { position: cc.v2(targetX, targetY) }).call(() => { this.gameControllerSprite.getComponent("GameController").makeBullet(this.node.position, this.node.parent); }).start();
 
             this._changePositionTime = getRandom(this._moveInterval[0], this._moveInterval[1], true);
         }
@@ -52,7 +52,7 @@ export default class NewClass extends cc.Component {
 
     checkBulletTime(dt) {
         if (this._changeBulletTime <= 0) {
-            this.gameControllerSprite.getComponent("GameController").makeBullet(this.node.position);
+            this.gameControllerSprite.getComponent("GameController").makeBullet(this.node.position, this.node.parent);
             this._changeBulletTime = getRandom(this._bulletInterval[0], this._bulletInterval[1], true);
         }
         this._changeBulletTime -= dt;
@@ -60,6 +60,6 @@ export default class NewClass extends cc.Component {
 
     update(dt) {
         this.checkChangePositionTime(dt);
-        this.checkBulletTime(dt);
+        // this.checkBulletTime(dt);
     }
 }
