@@ -1,5 +1,8 @@
 import { Integer, Vec2 } from './../../../creator.d';
 import { getRandom } from "../utils/index";
+import { danmakus } from "../../danmaku/danmaku";
+
+
 // Learn TypeScript:
 //  - https://docs.cocos.com/creator/manual/en/scripting/typescript.html
 // Learn Attribute:
@@ -9,11 +12,20 @@ import { getRandom } from "../utils/index";
 
 const { ccclass, property } = cc._decorator;
 
+enum DanmakuType {
+    TYPE_A
+}
+
 @ccclass
 export default class NewClass extends cc.Component {
 
     @property(cc.Node)
     gameControllerSprite: cc.Node = null;
+
+    @property({
+        type: cc.Enum(DanmakuType)
+    })
+    danmakuType: DanmakuType = DanmakuType.TYPE_A
 
     @property
     _bossInitPosition: cc.Vec2 = null;
@@ -24,6 +36,9 @@ export default class NewClass extends cc.Component {
     _moveTime = 0.5;
     _moveInterval = [3, 6];
     _bulletInterval = [1, 3];
+    _danmaku = [];
+    _danmakuCount = 0;
+    _danmakuIndex = 0;
 
     // LIFE-CYCLE CALLBACKS:
 
@@ -33,6 +48,10 @@ export default class NewClass extends cc.Component {
         this._bossMoveRangeY = [cc.view.getDesignResolutionSize().height * 0.2 + this.node.height * 1.2, cc.view.getDesignResolutionSize().height * 0.4 - this.node.height * 1.2];
         this.node.x = this._bossInitPosition.x;
         this.node.y = this._bossInitPosition.y;
+
+        this._danmaku = danmakus()[this.danmakuType].danmakus;
+        this._danmakuCount = this._danmaku.length;
+        this._danmakuIndex = 0;
     }
 
     start() {
@@ -43,7 +62,11 @@ export default class NewClass extends cc.Component {
         if (this._changePositionTime <= 0) {
             let targetX = getRandom(this._bossMoveRangeX[0], this._bossMoveRangeX[1], true);
             let targetY = getRandom(this._bossMoveRangeY[0], this._bossMoveRangeY[1], true);
-            cc.tween(this.node).to(this._moveTime, { position: cc.v2(targetX, targetY) }).call(() => { this.gameControllerSprite.getComponent("GameController").makeBullet(this.node.position, this.node.parent); }).start();
+            let bullets = this._danmaku[this._danmakuIndex++].bullets;
+            if (this._danmakuIndex >= this._danmakuCount) {
+                this._danmakuIndex = 0;
+            }
+            cc.tween(this.node).to(this._moveTime, { position: cc.v2(targetX, targetY) }).call(() => { this.gameControllerSprite.getComponent("GameController").makeBullet(this.node.position, this.node.parent, bullets); }).start();
 
             this._changePositionTime = getRandom(this._moveInterval[0], this._moveInterval[1], true);
         }
@@ -52,7 +75,11 @@ export default class NewClass extends cc.Component {
 
     checkBulletTime(dt) {
         if (this._changeBulletTime <= 0) {
-            this.gameControllerSprite.getComponent("GameController").makeBullet(this.node.position, this.node.parent);
+            let bullets = this._danmaku[this._danmakuIndex++].bullets;
+            if (this._danmakuIndex >= this._danmakuCount) {
+                this._danmakuIndex = 0;
+            }
+            this.gameControllerSprite.getComponent("GameController").makeBullet(this.node.position, this.node.parent, bullets);
             this._changeBulletTime = getRandom(this._bulletInterval[0], this._bulletInterval[1], true);
         }
         this._changeBulletTime -= dt;

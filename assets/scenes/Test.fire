@@ -20,7 +20,7 @@
         "__id__": 11
       }
     ],
-    "_active": true,
+    "_active": false,
     "_components": [],
     "_prefab": null,
     "_opacity": 255,
@@ -177,7 +177,7 @@
       "array": [
         0,
         0,
-        409.0481551718718,
+        541.2658773652742,
         0,
         0,
         0,
@@ -500,6 +500,7 @@
     "gameControllerSprite": {
       "__id__": 11
     },
+    "danmakuType": 0,
     "_bossInitPosition": null,
     "_id": "d25d6WIENKYo8/nxsHuLkY"
   },
@@ -579,6 +580,13 @@
     "boss": {
       "__id__": 8
     },
+    "degree": 540,
+    "direction": 1,
+    "bulletSpace": 10,
+    "bulletTimeSpace": 2,
+    "times": 1,
+    "bulletSpeed": 10,
+    "bulletMoveDis": 50,
     "_bulletPool": null,
     "_id": "45ZnSOSC9LUr96YlldXCEL"
   },

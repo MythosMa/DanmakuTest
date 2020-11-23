@@ -23,21 +23,25 @@ export default class NewClass extends cc.Component {
     }
 
     update(dt) {
-
+        this.checkIsOutScreen();
     }
 
     init(showTime, speed, moveX, moveY, destroyBullet) {
         let node = this.node;
         this.destroyBullet = destroyBullet;
         this.scheduleOnce(() => {
-            node.active = true;
             cc.tween(node).by(1 / speed, { position: cc.v2(moveX, moveY) }).repeatForever().start();
         }, showTime);
     }
 
-    checkOutScreen() {
+    checkIsOutScreen() {
         if (checkOutScreen(this.node.position) && this.destroyBullet) {
+            this.node.stopAllActions();
             this.destroyBullet(this.node);
         }
+    }
+
+    onDestroy() {
+
     }
 }
